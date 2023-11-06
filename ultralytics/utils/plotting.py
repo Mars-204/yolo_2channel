@@ -218,7 +218,11 @@ class Annotator:
 
     def rectangle(self, xy, fill=None, outline=None, width=1):
         """Add rectangle to image (PIL-only)."""
-        self.draw.rectangle(xy, fill, outline, width)
+        if self.pil: # for PIL
+            self.draw.rectangle(xy, fill, outline, width)
+        else:  # for np.array
+            p1, p2 = (int(xy[0]), int(xy[1])), (int(xy[2]), int(xy[3]))
+            cv2.rectangle(self.im, p1, p2, color=outline, thickness=self.lw, lineType=cv2.LINE_AA)
 
     def text(self, xy, text, txt_color=(255, 255, 255), anchor='top', box_style=False):
         """Adds text to an image using PIL or cv2."""
@@ -397,7 +401,8 @@ def plot_images(images,
         images *= 255  # de-normalise (optional)
 
     # Build Image
-    mosaic = np.full((int(ns * h), int(ns * w), 3), 255, dtype=np.uint8)  # init
+    # mosaic = np.full((int(ns * h), int(ns * w), 3), 255, dtype=np.uint8)  # init
+    mosaic = np.full((int(ns * h), int(ns * w), 2), 255, dtype=np.uint8)   # for 2 channel
     for i, im in enumerate(images):
         if i == max_subplots:  # if last batch has fewer images than we expect
             break
@@ -414,7 +419,8 @@ def plot_images(images,
 
     # Annotate
     fs = int((h + w) * ns * 0.01)  # font size
-    annotator = Annotator(mosaic, line_width=round(fs / 10), font_size=fs, pil=True, example=names)
+    # annotator = Annotator(mosaic, line_width=round(fs / 10), font_size=fs, pil=True, example=names)
+    annotator = Annotator(mosaic, line_width=round(fs / 10), font_size=fs, pil=False, example=names)
     for i in range(i + 1):
         x, y = int(w * (i // ns)), int(h * (i % ns))  # block origin
         annotator.rectangle([x, y, x + w, y + h], None, (255, 255, 255), width=2)  # borders
@@ -490,7 +496,10 @@ def plot_images(images,
                         with contextlib.suppress(Exception):
                             im[y:y + h, x:x + w, :][mask] = im[y:y + h, x:x + w, :][mask] * 0.4 + np.array(color) * 0.6
                 annotator.fromarray(im)
-    annotator.im.save(fname)  # save
+    try:
+        annotator.im.save(fname)  # save PIL image
+    except Exception as ex:
+        np.save(fname, im)  # save numpy image
     if on_plot:
         on_plot(fname)
 

@@ -240,7 +240,10 @@ class BasePredictor:
 
         # Warmup model
         if not self.done_warmup:
-            self.model.warmup(imgsz=(1 if self.model.pt or self.model.triton else self.dataset.bs, 3, *self.imgsz))
+            try:
+                self.model.warmup(imgsz=(1 if self.model.pt or self.model.triton else self.dataset.bs, 2, *self.imgsz))  # for 2 channels
+            except:
+                self.model.warmup(imgsz=(1 if self.model.pt or self.model.triton else self.dataset.bs, 3, *self.imgsz))  
             self.done_warmup = True
 
         self.seen, self.windows, self.batch, profilers = 0, [], None, (ops.Profile(), ops.Profile(), ops.Profile())
@@ -327,7 +330,10 @@ class BasePredictor:
             self.windows.append(p)
             cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
             cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
-        cv2.imshow(str(p), im0)
+        try:
+            cv2.imshow(str(p), im0)
+        except Exception as ex:
+            cv2.imshow(str(p), im0[:,:, 0])  # Print only grayscale cahnnel of the image
         cv2.waitKey(500 if self.batch[3].startswith('image') else 1)  # 1 millisecond
 
     def save_preds(self, vid_cap, idx, save_path):

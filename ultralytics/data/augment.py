@@ -155,7 +155,8 @@ class Mosaic(BaseMixTransform):
     def get_indexes(self, buffer=True):
         """Return a list of random indexes from the dataset."""
         if buffer:  # select images from buffer
-            return random.choices(list(self.dataset.buffer), k=self.n - 1)
+            return [random.randint(0, len(self.dataset) - 1) for _ in range(self.n - 1)]
+            # return random.choices(list(self.dataset.buffer), k=self.n - 1)
         else:  # select any images
             return [random.randint(0, len(self.dataset) - 1) for _ in range(self.n - 1)]
 
@@ -941,7 +942,7 @@ def v8_transforms(dataset, imgsz, hyp, stretch=False):
         pre_transform,
         MixUp(dataset, pre_transform=pre_transform, p=hyp.mixup),
         Albumentations(p=1.0),
-        RandomHSV(hgain=hyp.hsv_h, sgain=hyp.hsv_s, vgain=hyp.hsv_v),
+        # RandomHSV(hgain=hyp.hsv_h, sgain=hyp.hsv_s, vgain=hyp.hsv_v),
         RandomFlip(direction='vertical', p=hyp.flipud),
         RandomFlip(direction='horizontal', p=hyp.fliplr, flip_idx=flip_idx)])  # transforms
 
