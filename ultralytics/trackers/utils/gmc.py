@@ -247,7 +247,9 @@ class GMC:
     def applySparseOptFlow(self, raw_frame, detections=None):
         """Initialize."""
         height, width, _ = raw_frame.shape
-        frame = cv2.cvtColor(raw_frame, cv2.COLOR_BGR2GRAY)
+        # frame = cv2.cvtColor(raw_frame, cv2.COLOR_BGR2GRAY)
+        frame = raw_frame[:, :, 0]  # for our 2 chnalle image. Taking only the grayscale part
+
         H = np.eye(2, 3)
 
         # Downscale image
