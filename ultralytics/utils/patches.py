@@ -22,7 +22,7 @@ def imread(filename: str, flags: int = cv2.IMREAD_COLOR):
     Returns:
         (np.ndarray): The read image.
     """
-    return cv2.imdecode(np.fromfile(filename, np.uint8), flags)
+    return cv2.imdecode(np.fromfile(filename, np.uint16), flags)
 
 
 def imwrite(filename: str, img: np.ndarray, params=None):

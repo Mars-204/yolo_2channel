@@ -53,7 +53,12 @@ class DetectionTrainer(BaseTrainer):
 
     def preprocess_batch(self, batch):
         """Preprocesses a batch of images by scaling and converting to float."""
-        batch['img'] = batch['img'].to(self.device, non_blocking=True).float() / 255
+        # batch['img'] = batch['img'].to(self.device, non_blocking=True).float() / 255
+        # Normalizing intensity and depth images seperately
+        batch['img'][:,0,:,:] = batch['img'][:,0,:,:] / 255 # intensity image 255
+        batch['img'][:,1,:,:]  = batch['img'][:,1,:,:] / 31500 # depth image 31500
+        batch['img'] = batch['img'].to(self.device, non_blocking=True).float()
+
         return batch
 
     def set_model_attributes(self):

@@ -90,7 +90,7 @@ class BasePredictor:
         self.done_warmup = False
         if self.args.show:
             self.args.show = check_imshow(warn=True)
-
+        self.args.imgsz = 512
         # Usable if setup is done
         self.model = None
         self.data = self.args.data  # data_dict
@@ -120,7 +120,11 @@ class BasePredictor:
             im = np.stack(self.pre_transform(im))
             im = im[..., ::-1].transpose((0, 3, 1, 2))  # BGR to RGB, BHWC to BCHW, (n, 3, h, w)
             im = np.ascontiguousarray(im)  # contiguous
-            im = torch.from_numpy(im)
+            try:
+                im = torch.from_numpy(im)
+            except:
+                im = im.astype(np.float32)
+                im = torch.from_numpy(im)
 
         im = im.to(self.device)
         im = im.half() if self.model.fp16 else im.float()  # uint8 to fp16/32
@@ -333,9 +337,10 @@ class BasePredictor:
             cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
             cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
         try:
-            cv2.imshow(str(p), im0)
+            i = im0.astype(np.uint8)
+            cv2.imshow(str(p), im0[:,:,0])
         except Exception as ex:
-            cv2.imshow(str(p), im0[:,:, 0])  # Print only grayscale cahnnel of the image
+            cv2.imshow(str(p), im0[:,:,0])  # Print only grayscale channel of the image
         cv2.waitKey(500 if self.batch[3].startswith('image') else 1)  # 1 millisecond
 
     def save_preds(self, vid_cap, idx, save_path):
