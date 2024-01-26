@@ -148,6 +148,7 @@ class BaseDataset(Dataset):
             if fn.exists():  # load npy
                 try:
                     im = np.load(fn)
+                    im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
                 except Exception as e:
                     LOGGER.warning(f'{self.prefix}WARNING ⚠️ Removing corrupt *.npy image file {fn} due to: {e}')
                     Path(fn).unlink(missing_ok=True)

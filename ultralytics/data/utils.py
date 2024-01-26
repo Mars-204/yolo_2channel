@@ -107,6 +107,7 @@ def verify_image_label(args):
                         msg = f'{prefix}WARNING ⚠️ {im_file}: corrupt JPEG restored and saved'
         except Exception as ex:
             im = np.load(im_file) # load .npy image files
+            im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
             shape = (im.shape[1], im.shape[0])
 
         # Verify labels

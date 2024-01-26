@@ -179,7 +179,7 @@ class Mosaic(BaseMixTransform):
 
             # Place img in img4
             if i == 0:  # top left
-                img4 = np.full((s * 2, s * 2, img.shape[2]), 114, dtype=np.uint16)  # base image with 4 tiles
+                img4 = np.full((s * 2, s * 2, img.shape[2]), 114, dtype=np.uint8)  # base image with 4 tiles
                 x1a, y1a, x2a, y2a = max(xc - w, 0), max(yc - h, 0), xc, yc  # xmin, ymin, xmax, ymax (large image)
                 x1b, y1b, x2b, y2b = w - (x2a - x1a), h - (y2a - y1a), w, h  # xmin, ymin, xmax, ymax (small image)
             elif i == 1:  # top right
@@ -215,7 +215,7 @@ class Mosaic(BaseMixTransform):
 
             # Place img in img9
             if i == 0:  # center
-                img9 = np.full((s * 3, s * 3, img.shape[2]), 114, dtype=np.uint16)  # base image with 4 tiles
+                img9 = np.full((s * 3, s * 3, img.shape[2]), 114, dtype=np.uint8)  # base image with 4 tiles
                 h0, w0 = h, w
                 c = s, s, s + w, s + h  # xmin, ymin, xmax, ymax (base) coordinates
             elif i == 1:  # top
@@ -297,7 +297,7 @@ class MixUp(BaseMixTransform):
         """Applies MixUp augmentation as per https://arxiv.org/pdf/1710.09412.pdf."""
         r = np.random.beta(32.0, 32.0)  # mixup ratio, alpha=beta=32.0
         labels2 = labels['mix_labels'][0]
-        labels['img'] = (labels['img'] * r + labels2['img'] * (1 - r)).astype(np.uint16)
+        labels['img'] = (labels['img'] * r + labels2['img'] * (1 - r)).astype(np.uint8)
         labels['instances'] = Instances.concatenate([labels['instances'], labels2['instances']], axis=0)
         labels['cls'] = np.concatenate([labels['cls'], labels2['cls']], 0)
         return labels
@@ -574,7 +574,7 @@ class RandomHSV:
         if self.hgain or self.sgain or self.vgain:
             r = np.random.uniform(-1, 1, 3) * [self.hgain, self.sgain, self.vgain] + 1  # random gains
             hue, sat, val = cv2.split(cv2.cvtColor(img, cv2.COLOR_BGR2HSV))
-            dtype = img.dtype  # uint16
+            dtype = img.dtype  # uint8
 
             x = np.arange(0, 256, dtype=r.dtype)
             lut_hue = ((x * r[0]) % 180).astype(dtype)
@@ -753,7 +753,7 @@ class CopyPaste:
         if self.p and len(instances.segments):
             n = len(instances)
             _, w, _ = im.shape  # height, width, channels
-            im_new = np.zeros(im.shape, np.uint16)
+            im_new = np.zeros(im.shape, np.uint8)
 
             # Calculate ioa first then select indexes randomly
             ins_flip = deepcopy(instances)
@@ -902,7 +902,7 @@ class Format:
         try:
             img = torch.from_numpy(img)
         except:
-            img = img.astype(np.float32)
+            img = img.astype(np.float16)
             img = torch.from_numpy(img)
         # img = torch.from_numpy(img)
         return img
@@ -1108,6 +1108,6 @@ class ToTensor:
         """
         im = np.ascontiguousarray(im.transpose((2, 0, 1))[::-1])  # HWC to CHW -> BGR to RGB -> contiguous
         im = torch.from_numpy(im)  # to torch
-        im = im.half() if self.half else im.float()  # uint16 to fp16/32
+        im = im.half() if self.half else im.float()  # uint8 to fp16/32
         im /= 255.0  # 0-255 to 0.0-1.0
         return im

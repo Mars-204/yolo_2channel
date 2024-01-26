@@ -90,7 +90,7 @@ class BasePredictor:
         self.done_warmup = False
         if self.args.show:
             self.args.show = check_imshow(warn=True)
-        self.args.imgsz = 512
+        
         # Usable if setup is done
         self.model = None
         self.data = self.args.data  # data_dict
@@ -337,7 +337,7 @@ class BasePredictor:
             cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
             cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
         try:
-            i = im0.astype(np.uint8)
+            i = im0.astype(np.float32)
             cv2.imshow(str(p), im0[:,:,0])
         except Exception as ex:
             cv2.imshow(str(p), im0[:,:,0])  # Print only grayscale channel of the image
