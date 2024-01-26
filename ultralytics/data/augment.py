@@ -799,8 +799,8 @@ class Albumentations:
             T = [
                 A.Blur(p=0.01),
                 A.MedianBlur(p=0.01),
-                A.ToGray(p=0.01),
-                A.CLAHE(p=0.01),
+                # A.ToGray(p=0.01),
+                # A.CLAHE(p=0.01),
                 A.RandomBrightnessContrast(p=0.0),
                 A.RandomGamma(p=0.0),
                 A.ImageCompression(quality_lower=75, p=0.0)]  # transforms
@@ -946,7 +946,7 @@ def v8_transforms(dataset, imgsz, hyp, stretch=False):
     return Compose([
         pre_transform,
         MixUp(dataset, pre_transform=pre_transform, p=hyp.mixup),
-        Albumentations(p=1.0),
+        # Albumentations(p=1.0),
         # RandomHSV(hgain=hyp.hsv_h, sgain=hyp.hsv_s, vgain=hyp.hsv_v),
         RandomFlip(direction='vertical', p=hyp.flipud),
         RandomFlip(direction='horizontal', p=hyp.fliplr, flip_idx=flip_idx)])  # transforms
