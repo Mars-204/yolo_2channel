@@ -78,6 +78,7 @@ def verify_image(args):
             nf = 1
         except Exception as ex:
             im = np.load(im_file)
+            im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
             nf = 1
     except Exception as e:
         nc = 1

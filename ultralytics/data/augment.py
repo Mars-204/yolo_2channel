@@ -902,7 +902,7 @@ class Format:
         try:
             img = torch.from_numpy(img)
         except:
-            img = img.astype(np.float16)
+            img = img.astype(np.float32)
             img = torch.from_numpy(img)
         # img = torch.from_numpy(img)
         return img
