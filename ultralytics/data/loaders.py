@@ -379,7 +379,25 @@ class LoadPilAndNumpy:
     def __init__(self, im0, imgsz=640):
         """Initialize PIL and Numpy Dataloader."""
         if not isinstance(im0, list):
-            im0 = [im0]
+            try:
+                if im0[-7:] == 'bus.jpg':
+                    im0 = [im0]
+            except Exception as ex:
+                im = im0
+                inten = im[:,:,0].astype(np.uint64)
+                depth = im[:,:,1].astype(np.uint64)
+                new_depth = np.multiply(depth,depth)
+                inten = np.multiply(inten, new_depth)
+                # print(inten.max())
+                inten = (inten/45000000000)*255
+                inten = np.where(inten>255, 255, inten)
+                # print(inten.max())
+                im[:,:,0] = inten
+                
+                z1 = ((im[:,:,1]/32000)*255)
+                im = np.dstack((im[:,:,0],z1))
+                im0 = im
+                im0 = [im0]
         self.paths = [getattr(im, 'filename', f'image{i}.jpg') for i, im in enumerate(im0)]
         self.im0 = [self._single_check(im) for im in im0]
         self.imgsz = imgsz
@@ -390,7 +408,10 @@ class LoadPilAndNumpy:
     @staticmethod
     def _single_check(im):
         """Validate and format an image to numpy array."""
-        assert isinstance(im, (Image.Image, np.ndarray)), f'Expected PIL/np.ndarray image type, but got {type(im)}'
+        try:
+            im = cv2.imread(im)
+        except Exception as ex:
+            assert isinstance(im, (Image.Image, np.ndarray)), f'Expected PIL/np.ndarray image type, but got {type(im)}'
         if isinstance(im, Image.Image):
             if im.mode != 'RGB':
                 im = im.convert('RGB')

@@ -17,7 +17,7 @@ from torch.utils.data import Dataset
 from ultralytics.utils import DEFAULT_CFG, LOCAL_RANK, LOGGER, NUM_THREADS, TQDM
 
 from .utils import HELP_URL, IMG_FORMATS
-
+count = 0
 
 class BaseDataset(Dataset):
     """
@@ -51,7 +51,7 @@ class BaseDataset(Dataset):
                  img_path,
                  imgsz=640,
                  cache=False,
-                 augment=True,
+                 augment=False,
                  hyp=DEFAULT_CFG,
                  prefix='',
                  rect=False,
@@ -148,7 +148,31 @@ class BaseDataset(Dataset):
             if fn.exists():  # load npy
                 try:
                     im = np.load(fn)
-                    im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
+                    # inten = im[:,:,0].astype(np.uint64)
+                    # depth = im[:,:,1].astype(np.uint64)
+                    # new_depth = np.multiply(depth,depth)
+                    # inten = np.multiply(inten, new_depth)
+                    # inten = (inten/510000000000)*255
+                    # im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
+                    # if im[:,:,0].max()>255:
+                    #     # print(f'Intensity out of range{fn}-{im[:,:,0].max()}')
+                    #     count = count +1
+                    #     print(count)
+                    # x = im[:,:,0].astype(np.uint8)
+                    # y = ((im[:,:,1]/32000)*255).astype(np.uint8)
+                    # im = np.dstack((x,y))
+                    inten = im[:,:,0].astype(np.uint64)
+                    depth = im[:,:,1].astype(np.uint64)
+                    new_depth = np.multiply(depth,depth)
+                    inten = np.multiply(inten, new_depth)
+                    # print(inten.max())
+                    inten = (inten/45000000000)*255
+                    inten = np.where(inten>255, 255, inten)
+                    # print(inten.max())
+                    im[:,:,0] = inten
+                    
+                    z1 = ((im[:,:,1]/32000)*255)
+                    im = np.dstack((im[:,:,0],z1))
                 except Exception as e:
                     LOGGER.warning(f'{self.prefix}WARNING ⚠️ Removing corrupt *.npy image file {fn} due to: {e}')
                     Path(fn).unlink(missing_ok=True)
