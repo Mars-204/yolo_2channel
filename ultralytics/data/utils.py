@@ -87,17 +87,10 @@ def verify_image(args):
             inten = np.where(inten>255, 255, inten)
             im[:,:,0] = inten
             
-            z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
+            z1 = ((im[:,:,1]/32000)*255)
             im = np.dstack((im[:,:,0],z1))
             # im = np.dstack((z1, z1))
             # im = np.dstack((im[:,:,0],im[:,:,0]))
-            ## im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
-            ## inten = im[:,:,0].astype(np.uint64)
-            ## depth = im[:,:,1].astype(np.uint64)
-            ## new_depth = np.multiply(depth,depth)
-            ## inten = np.multiply(inten, new_depth)
-            ## inten = (inten/510000000000)*255
-            ## im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
 
             # for synthetic
             # inten = im[:,:,0].astype(np.uint16)
@@ -144,19 +137,10 @@ def verify_image_label(args):
             inten = np.where(inten>255, 255, inten)
             im[:,:,0] = inten
             
-            z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
-            im = np.dstack((im[:,:,0],z1))
-            # im = np.dstack((z1, z1))
-            # im = np.dstack((im[:,:,0],im[:,:,0]))
-
-            # trial
-            # im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
-            # inten = im[:,:,0].astype(np.uint64)
-            # depth = im[:,:,1].astype(np.uint64)
-            # new_depth = np.multiply(depth,depth)
-            # inten = np.multiply(inten, new_depth)
-            # inten = (inten/510000000000)*255
-            # im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
+            z1 = ((im[:,:,1]/32000)*255)
+            im = np.dstack((im[:,:,0],z1))  # for 2 channel intensity+depth
+            # im = np.dstack((z1, z1))  # for depth_only
+            # im = np.dstack((im[:,:,0],im[:,:,0]))  # for intensity_only
 
             # for synthetic
             # inten = im[:,:,0].astype(np.uint16)
