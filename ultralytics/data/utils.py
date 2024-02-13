@@ -78,25 +78,34 @@ def verify_image(args):
             nf = 1
         except Exception as ex:
             im = np.load(im_file)
-            # im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
+            
             inten = im[:,:,0].astype(np.uint64)
             depth = im[:,:,1].astype(np.uint64)
             new_depth = np.multiply(depth,depth)
             inten = np.multiply(inten, new_depth)
-            # print(inten.max())
             inten = (inten/45000000000)*255
             inten = np.where(inten>255, 255, inten)
-            # print(inten.max())
             im[:,:,0] = inten
             
-            z1 = ((im[:,:,1]/32000)*255)
-            im = np.dstack((im[:,:,0],z1))
-            # inten = im[:,:,0].astype(np.uint64)
-            # depth = im[:,:,1].astype(np.uint64)
-            # new_depth = np.multiply(depth,depth)
-            # inten = np.multiply(inten, new_depth)
-            # inten = (inten/510000000000)*255
-            # im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
+            z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
+            # im = np.dstack((im[:,:,0],z1))
+            im = np.dstack((z1, z1))
+            # im = np.dstack((im[:,:,0],im[:,:,0]))
+            ## im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
+            ## inten = im[:,:,0].astype(np.uint64)
+            ## depth = im[:,:,1].astype(np.uint64)
+            ## new_depth = np.multiply(depth,depth)
+            ## inten = np.multiply(inten, new_depth)
+            ## inten = (inten/510000000000)*255
+            ## im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
+
+            # for synthetic
+            # inten = im[:,:,0].astype(np.uint16)
+            # depth = im[:,:,1].astype(np.uint16)
+            # new_depth = depth/55
+            # new_depth = np.where(new_depth>1, 1, new_depth)
+            # new_depth = new_depth * 255
+            # im = np.dstack((inten, new_depth))
             nf = 1
     except Exception as e:
         nc = 1
@@ -126,18 +135,21 @@ def verify_image_label(args):
                         msg = f'{prefix}WARNING ⚠️ {im_file}: corrupt JPEG restored and saved'
         except Exception as ex:
             im = np.load(im_file) # load .npy image files
+            # for real
             inten = im[:,:,0].astype(np.uint64)
             depth = im[:,:,1].astype(np.uint64)
             new_depth = np.multiply(depth,depth)
             inten = np.multiply(inten, new_depth)
-            # print(inten.max())
             inten = (inten/45000000000)*255
             inten = np.where(inten>255, 255, inten)
-            # print(inten.max())
             im[:,:,0] = inten
             
-            z1 = ((im[:,:,1]/32000)*255)
+            z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
             im = np.dstack((im[:,:,0],z1))
+            # im = np.dstack((z1, z1))
+            # im = np.dstack((im[:,:,0],im[:,:,0]))
+
+            # trial
             # im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
             # inten = im[:,:,0].astype(np.uint64)
             # depth = im[:,:,1].astype(np.uint64)
@@ -145,7 +157,17 @@ def verify_image_label(args):
             # inten = np.multiply(inten, new_depth)
             # inten = (inten/510000000000)*255
             # im[:,:,0] = ((inten/510000000000)*255).astype(np.uint8)
+
+            # for synthetic
+            # inten = im[:,:,0].astype(np.uint16)
+            # depth = im[:,:,1].astype(np.uint16)
+            # new_depth = depth/55
+            # new_depth = np.where(new_depth>1, 1, new_depth)
+            # new_depth = new_depth * 255
+            # im = np.dstack((inten, new_depth))
+
             shape = (im.shape[1], im.shape[0])
+
 
         # Verify labels
         if os.path.isfile(lb_file):

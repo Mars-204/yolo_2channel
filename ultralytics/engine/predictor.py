@@ -106,6 +106,7 @@ class BasePredictor:
         self.transforms = None
         self.callbacks = _callbacks or callbacks.get_default_callbacks()
         self.txt_path = None
+        self.count = 0
         callbacks.add_integration_callbacks(self)
 
     def preprocess(self, im):
@@ -337,8 +338,15 @@ class BasePredictor:
             cv2.namedWindow(str(p), cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO)  # allow window resize (Linux)
             cv2.resizeWindow(str(p), im0.shape[1], im0.shape[0])
         try:
-            i = im0.astype(np.uint8)
-            cv2.imshow(str(p), i[:,:,0])
+            image = np.zeros((im0.shape[0], im0.shape[1],3), dtype=np.uint8)
+            image[:,:,0] = im0[:,:,0]
+            image[:,:,1] = im0[:,:,0]
+            image[:,:,2] = im0[:,:,0]
+            cv2.imshow(str(p), image)
+            # saved_dir = Path(r'D:\work\masterarbiet\Documentation\test_video_synthetic')
+            # image_path = saved_dir / f'image_{self.count}.jpg'
+            # cv2.imwrite(str(image_path), image)
+            # self.count = self.count + 1 
         except Exception as ex:
             cv2.imshow(str(p), im0[:,:,0])  # Print only grayscale channel of the image
         cv2.waitKey(500 if self.batch[3].startswith('image') else 1)  # 1 millisecond

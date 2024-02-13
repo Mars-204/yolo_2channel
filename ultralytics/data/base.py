@@ -161,18 +161,29 @@ class BaseDataset(Dataset):
                     # x = im[:,:,0].astype(np.uint8)
                     # y = ((im[:,:,1]/32000)*255).astype(np.uint8)
                     # im = np.dstack((x,y))
+
+                    # for actual data
                     inten = im[:,:,0].astype(np.uint64)
                     depth = im[:,:,1].astype(np.uint64)
                     new_depth = np.multiply(depth,depth)
                     inten = np.multiply(inten, new_depth)
-                    # print(inten.max())
                     inten = (inten/45000000000)*255
                     inten = np.where(inten>255, 255, inten)
-                    # print(inten.max())
                     im[:,:,0] = inten
                     
-                    z1 = ((im[:,:,1]/32000)*255)
+                    z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
                     im = np.dstack((im[:,:,0],z1))
+                    # im = np.dstack((z1,z1))
+                    # im = np.dstack((im[:,:,0],im[:,:,0]))
+
+                    # for synthetic data
+                    # inten = im[:,:,0].astype(np.uint16)
+                    # depth = im[:,:,1].astype(np.uint16)
+                    # new_depth = depth/55
+                    # new_depth = np.where(new_depth>1, 1, new_depth)
+                    # new_depth = new_depth * 255
+                    # im = np.dstack((inten, new_depth))
+
                 except Exception as e:
                     LOGGER.warning(f'{self.prefix}WARNING ⚠️ Removing corrupt *.npy image file {fn} due to: {e}')
                     Path(fn).unlink(missing_ok=True)

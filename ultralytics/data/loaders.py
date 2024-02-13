@@ -384,20 +384,38 @@ class LoadPilAndNumpy:
                     im0 = [im0]
             except Exception as ex:
                 im = im0
+                ## for real data
                 inten = im[:,:,0].astype(np.uint64)
                 depth = im[:,:,1].astype(np.uint64)
                 new_depth = np.multiply(depth,depth)
                 inten = np.multiply(inten, new_depth)
-                # print(inten.max())
                 inten = (inten/45000000000)*255
                 inten = np.where(inten>255, 255, inten)
-                # print(inten.max())
                 im[:,:,0] = inten
-                
-                z1 = ((im[:,:,1]/32000)*255)
+                z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
                 im = np.dstack((im[:,:,0],z1))
-                im0 = im
-                im0 = [im0]
+                # im = np.dstack((z1, z1))
+                # im = np.dstack((im[:,:,0],im[:,:,0]))
+                im0 = [im]
+
+                ## for synthetic data
+                # inten = im[:,:,0]
+                # depth = im[:,:,1]
+                # new_depth = depth/55
+                # # new_depth = np.where(new_depth>1, 1, new_depth)
+                # new_depth = new_depth * 255
+                # im0 = np.dstack((inten,new_depth))
+                # im0 = [im0]
+
+                # test
+                # inten = im[:,:,0]
+                # depth = im[:,:,1]
+                # inten = np.where(inten>255, 255, inten)
+                # im[:,:,0] = inten
+                # z1 = ((im[:,:,1]/32000)*255)
+                # im = np.dstack((im[:,:,0],z1))
+                # im0 = [im]
+              
         self.paths = [getattr(im, 'filename', f'image{i}.jpg') for i, im in enumerate(im0)]
         self.im0 = [self._single_check(im) for im in im0]
         self.imgsz = imgsz
