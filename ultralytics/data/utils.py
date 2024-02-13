@@ -88,8 +88,8 @@ def verify_image(args):
             im[:,:,0] = inten
             
             z1 = ((im[:,:,1]/32000)*255).astype(np.uint8)
-            # im = np.dstack((im[:,:,0],z1))
-            im = np.dstack((z1, z1))
+            im = np.dstack((im[:,:,0],z1))
+            # im = np.dstack((z1, z1))
             # im = np.dstack((im[:,:,0],im[:,:,0]))
             ## im[:,:,1] = ((im[:,:,1]/32000)*255).astype(np.uint8)
             ## inten = im[:,:,0].astype(np.uint64)
