@@ -307,7 +307,9 @@ def plot_labels(boxes, cls, names=(), save_dir=Path(''), on_plot=None):
         ImageDraw.Draw(img).rectangle(box, width=1, outline=colors(cls))  # plot
     ax[1].imshow(img)
     ax[1].axis('off')
-
+    ax[3].set_xlim(0, 1)
+    ax[3].set_ylim(0, 1)
+    
     for a in [0, 1, 2, 3]:
         for s in ['top', 'right', 'left', 'bottom']:
             ax[a].spines[s].set_visible(False)
