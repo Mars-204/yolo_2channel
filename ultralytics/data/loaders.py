@@ -393,9 +393,9 @@ class LoadPilAndNumpy:
                 inten = np.where(inten>255, 255, inten)
                 im[:,:,0] = inten
                 z1 = ((im[:,:,1]/32000)*255)
-                im = np.dstack((im[:,:,0],z1))
+                # im = np.dstack((im[:,:,0],z1))
                 # im = np.dstack((z1, z1))
-                # im = np.dstack((im[:,:,0],im[:,:,0]))
+                im = np.dstack((im[:,:,0],im[:,:,0]))
                 im0 = [im]
 
                 ## for synthetic data

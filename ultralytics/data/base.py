@@ -172,9 +172,9 @@ class BaseDataset(Dataset):
                     im[:,:,0] = inten
                     
                     z1 = ((im[:,:,1]/32000)*255)
-                    im = np.dstack((im[:,:,0],z1))
+                    # im = np.dstack((im[:,:,0],z1))
                     # im = np.dstack((z1,z1))
-                    # im = np.dstack((im[:,:,0],im[:,:,0]))
+                    im = np.dstack((im[:,:,0],im[:,:,0]))
 
                     # for synthetic data
                     # inten = im[:,:,0].astype(np.uint16)
