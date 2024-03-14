@@ -88,9 +88,9 @@ def verify_image(args):
             im[:,:,0] = inten
             
             z1 = ((im[:,:,1]/32000)*255)
-            # im = np.dstack((im[:,:,0],z1))
+            im = np.dstack((im[:,:,0],z1))
             # im = np.dstack((z1, z1))
-            im = np.dstack((im[:,:,0],im[:,:,0]))
+            # im = np.dstack((im[:,:,0],im[:,:,0]))
 
             # for synthetic
             # inten = im[:,:,0].astype(np.uint16)
@@ -99,6 +99,8 @@ def verify_image(args):
             # new_depth = np.where(new_depth>1, 1, new_depth)
             # new_depth = new_depth * 255
             # im = np.dstack((inten, new_depth))
+            # im = np.dstack((inten, inten))  # for intensity
+            # im = np.dstack((new_depth, new_depth))  # for depth
             nf = 1
     except Exception as e:
         nc = 1
@@ -138,9 +140,9 @@ def verify_image_label(args):
             im[:,:,0] = inten
             
             z1 = ((im[:,:,1]/32000)*255)
-            # im = np.dstack((im[:,:,0],z1))  # for 2 channel intensity+depth
+            im = np.dstack((im[:,:,0],z1))  # for 2 channel intensity+depth
             # im = np.dstack((z1, z1))  # for depth_only
-            im = np.dstack((im[:,:,0],im[:,:,0]))  # for intensity_only
+            # im = np.dstack((im[:,:,0],im[:,:,0]))  # for intensity_only
 
             # for synthetic
             # inten = im[:,:,0].astype(np.uint16)
@@ -148,7 +150,9 @@ def verify_image_label(args):
             # new_depth = depth/55
             # new_depth = np.where(new_depth>1, 1, new_depth)
             # new_depth = new_depth * 255
-            # im = np.dstack((inten, new_depth))
+            # # im = np.dstack((inten, new_depth))
+            # im = np.dstack((inten, inten))  # for intensity
+            # im = np.dstack((new_depth, new_depth))  # for depth
 
             shape = (im.shape[1], im.shape[0])
 

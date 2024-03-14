@@ -173,8 +173,8 @@ class BaseDataset(Dataset):
                     
                     z1 = ((im[:,:,1]/32000)*255)
                     # im = np.dstack((im[:,:,0],z1))
-                    # im = np.dstack((z1,z1))
-                    im = np.dstack((im[:,:,0],im[:,:,0]))
+                    im = np.dstack((z1,z1))
+                    # im = np.dstack((im[:,:,0],im[:,:,0]))
 
                     # for synthetic data
                     # inten = im[:,:,0].astype(np.uint16)
@@ -183,6 +183,9 @@ class BaseDataset(Dataset):
                     # new_depth = np.where(new_depth>1, 1, new_depth)
                     # new_depth = new_depth * 255
                     # im = np.dstack((inten, new_depth))
+                    # im = np.dstack((inten, inten))  # for intensity
+                    # im = np.dstack((new_depth, new_depth))  # for depth
+
 
                 except Exception as e:
                     LOGGER.warning(f'{self.prefix}WARNING ⚠️ Removing corrupt *.npy image file {fn} due to: {e}')

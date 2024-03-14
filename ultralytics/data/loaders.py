@@ -393,18 +393,20 @@ class LoadPilAndNumpy:
                 inten = np.where(inten>255, 255, inten)
                 im[:,:,0] = inten
                 z1 = ((im[:,:,1]/32000)*255)
-                # im = np.dstack((im[:,:,0],z1))
+                im = np.dstack((im[:,:,0],z1))
                 # im = np.dstack((z1, z1))
-                im = np.dstack((im[:,:,0],im[:,:,0]))
+                # im = np.dstack((im[:,:,0],im[:,:,0]))
                 im0 = [im]
 
                 ## for synthetic data
-                # inten = im[:,:,0]
-                # depth = im[:,:,1]
+                # inten = im[:,:,0].astype(np.uint16)
+                # depth = im[:,:,1].astype(np.uint16)
                 # new_depth = depth/55
                 # new_depth = np.where(new_depth>1, 1, new_depth)
                 # new_depth = new_depth * 255
-                # im0 = np.dstack((inten,new_depth))
+                # im = np.dstack((inten, new_depth))
+                # im = np.dstack((inten, inten))  # for intensity
+                # im = np.dstack((new_depth, new_depth))  # for depth
                 # im0 = [im0]
               
         self.paths = [getattr(im, 'filename', f'image{i}.jpg') for i, im in enumerate(im0)]
